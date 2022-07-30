@@ -1,0 +1,9 @@
+#map {
+    height: 100%;
+}
+
+@media (max-width: 767px) {
+    .app-map-container{
+        height: 25rem;
+    }
+}

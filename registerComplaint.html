@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Denuncias Ciudadanas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link href="./css/style.css" rel="stylesheet">
+    <link href="./css/map.css" rel="stylesheet">
+    <script type="module" src="./js/registerComplaint.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row app-navbar">
+        <div class="col-md-3" style="alignment: center">
+            <h2>Denuncias Ciudadanas</h2>
+        </div>
+        <div class="col-md">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Registrar Denuncia</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Buscar Denuncias</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <form class="m-2 p-3 app-register-complaint-form">
+                <legend>Registrar Denuncia</legend>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="inputAddress" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="inputAddress">
+                    </div>
+                    <div class="col-6">
+                        <label for="inputLongitude" class="form-label">Longitud</label>
+                        <input type="number" class="form-control" id="inputLongitude">
+                    </div>
+                    <div class="col-6">
+                        <label for="inputLatitude" class="form-label">Latitude</label>
+                        <input type="number" class="form-control" id="inputLatitude">
+                    </div>
+                    <div class="col-12">
+                        <label for="inputComplaintType" class="form-label">Tipo de denuncia</label>
+                        <select class="form-select" id="inputComplaintType">
+                            <option value="ARMED_ROBBERY">Robo a mano armada</option>
+                            <option value="ROBBERY_WITH_VEHICLE">Robo a vehículo</option>
+                            <option value="VANDALISM">Vandalismo</option>
+                            <option value="ROBBERY_ON_THE_GO">Robo al paso</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label for="inputCommentary" class="form-label">Comentario acerca de la denuncia</label>
+                        <textarea class="form-control" id="inputCommentary" maxlength="255"></textarea>
+                    </div>
+                    <div class="col-6">
+                        <button type="submit" class="btn btn-primary">Registrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-8 app-map-container">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJoJVi7pyUh8cu9T13Mv0pc3Uu9Q4q1zs&callback=initMap&v=weekly"
+            defer
+    ></script>
+</div>
+</body>
+</html>
