@@ -7,3 +7,7 @@
     border-style: inset;
     border-color: #212121;
 }
+
+.app-register-complaint-form textarea{
+    resize: none;
+}

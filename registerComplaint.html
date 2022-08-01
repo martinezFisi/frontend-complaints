@@ -8,9 +8,30 @@
           integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <link href="./css/style.css" rel="stylesheet">
     <link href="./css/map.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script type="module" src="./js/registerComplaint.js"></script>
 </head>
 <body>
+
+<!-- Modal -->
+<div class="modal fade" id="registerComplaintModal" tabindex="-1" aria-labelledby="registerComplaintModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerComplaintModalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h7 id="registerComplaintModalBody"></h7>
+            </div>
+             <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container-fluid">
     <div class="row app-navbar">
         <div class="col-md-3" style="alignment: center">
@@ -37,12 +58,12 @@
                         <input type="text" class="form-control" id="inputAddress">
                     </div>
                     <div class="col-6">
-                        <label for="inputLongitude" class="form-label">Longitud</label>
-                        <input type="number" class="form-control" id="inputLongitude">
+                        <label for="inputLatitude" class="form-label">Latitude</label>
+                        <input type="number" class="form-control" id="inputLatitude" disabled>
                     </div>
                     <div class="col-6">
-                        <label for="inputLatitude" class="form-label">Latitude</label>
-                        <input type="number" class="form-control" id="inputLatitude">
+                        <label for="inputLongitude" class="form-label">Longitud</label>
+                        <input type="number" class="form-control" id="inputLongitude" disabled>
                     </div>
                     <div class="col-12">
                         <label for="inputComplaintType" class="form-label">Tipo de denuncia</label>
@@ -55,10 +76,10 @@
                     </div>
                     <div class="col-12">
                         <label for="inputCommentary" class="form-label">Comentario acerca de la denuncia</label>
-                        <textarea class="form-control" id="inputCommentary" maxlength="255"></textarea>
+                        <textarea class="form-control" id="inputCommentary" maxlength="255" rows="5"></textarea>
                     </div>
                     <div class="col-6">
-                        <button type="submit" class="btn btn-primary">Registrar</button>
+                        <button id="registerComplaintButton" type="button" class="btn btn-primary">Registrar</button>
                     </div>
                 </div>
             </form>
@@ -68,6 +89,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJoJVi7pyUh8cu9T13Mv0pc3Uu9Q4q1zs&callback=initMap&v=weekly"
             defer
     ></script>
