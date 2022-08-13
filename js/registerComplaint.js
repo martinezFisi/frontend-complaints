@@ -2,7 +2,7 @@ let API_GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 let API_KEY = "AIzaSyB_SIPbiID5aJfuog8Mq0QmRS5szRqFVe8";
 let BACKEND_HOST = "http://localhost:8282";
 let COMPLAINTS_URI = "/complaints/api/v1/complaints";
-let REGISTER_COMPLAINT_ENDPOINT = BACKEND_HOST + COMPLAINTS_URI;
+let COMPLAINTS_ENDPOINT = BACKEND_HOST + COMPLAINTS_URI;
 let ADDRESS_COMPONENTS_TYPE = ["postal_code","locality","country"];
 let map;
 let marker;
@@ -48,6 +48,7 @@ function dragEnd(){
     setLatLngInForm(lat, lng);
     getAddressByLatLng(lat, lng);
     setAddressInForm();
+    showComplaintsBy("locality", localityTemp);
 }
 
 function setLatLng(lat, lng){
@@ -126,7 +127,7 @@ function registerComplaint(){
 
     $.ajax({
         type: "POST",
-        url: REGISTER_COMPLAINT_ENDPOINT,
+        url: COMPLAINTS_ENDPOINT,
         contentType: "application/json",
         accept: "application/json;",
         data: complaintJson,
@@ -156,6 +157,39 @@ function registerComplaint(){
             bootstrapModal.show();
         }
     });
+}
+
+function showComplaintsBy(filter, value){
+    //initMap(latitud, longitud);
+
+    $.ajax({
+        type: "GET",
+        url: COMPLAINTS_ENDPOINT + "?searchCriterias=" + filter + ":" + value,
+        accept: "application/json",
+        success: function (complaints) {
+            setMarkers(complaints);
+        }
+    });
+
+}
+
+function setMarkers(complaints) {
+
+    complaints.forEach((complaint, index) => {
+        let resume = "Codigo: "+ complaint.id +"\n" +
+            "Direccion: "+ complaint.address +"\n" +
+            "Tipo: "+ complaint.complaintType +"\n" +
+            "Latitud: "+ complaint.latitude +"\n" +
+            "Longitud: "+ complaint.longitude +"\n";
+
+        new google.maps.Marker({
+            position: {lat: complaint.latitude, lng: complaint.longitude},
+            map: map,
+            title: resume,
+            zIndex: index
+        });
+    })
+
 }
 
 $("#registerComplaintButton").click(registerComplaint);
