@@ -4,8 +4,15 @@ let BACKEND_HOST = "http://localhost:8282";
 let COMPLAINTS_URI = "/complaints/api/v1/complaints";
 let COMPLAINTS_ENDPOINT = BACKEND_HOST + COMPLAINTS_URI;
 let ADDRESS_COMPONENTS_TYPE = ["postal_code","locality","country"];
+let mapIcons = new Map([
+    ['ARMED_ROBBERY', './imgs/ARMED_ROBBERY.png'],
+    ['ROBBERY_ON_THE_GO', './imgs/ROBBERY_ON_THE_GO.png'],
+    ['ROBBERY_TO_VEHICLE', './imgs/ROBBERY_TO_VEHICLE.png'],
+    ['VANDALISM', './imgs/VANDALISM.png']
+]);
 let map;
 let marker;
+let complaintMarkers = [];
 let latitude;
 let longitude;
 let addressTemp,postalCodeTemp,localityTemp,countryTemp;
@@ -27,20 +34,18 @@ function loadMap(lat, lng) {
         position: {lat: lat, lng: lng}
     });
 
-    marker.addListener("click", toggleBounce);
-    marker.addListener("dragend", dragEnd);
+    addListenersToMap();
+    showComplaintsBy("country", "Perú");
 }
 
-function toggleBounce() {
-    console.log("clickaste")
-    if (marker.getAnimation() !== null) {
-        marker.setAnimation(null);
-    } else {
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-    }
+function addListenersToMap(){
+    map.addListener("click", (mapsMouseEvent) => {
+        marker.setPosition(mapsMouseEvent.latLng);
+        processPosition();
+    });
 }
 
-function dragEnd(){
+function processPosition(){
     let lat = marker.getPosition().lat();
     let lng = marker.getPosition().lng();
     console.log("lat=" + lat + ", lng=" + lng);
@@ -48,7 +53,6 @@ function dragEnd(){
     setLatLngInForm(lat, lng);
     getAddressByLatLng(lat, lng);
     setAddressInForm();
-    showComplaintsBy("locality", localityTemp);
 }
 
 function setLatLng(lat, lng){
@@ -137,6 +141,7 @@ function registerComplaint(){
             modalTitle.textContent = "Éxito";
             modalBody.textContent = "Denuncia registrada satisfactoriamente.";
             bootstrapModal.show();
+            showComplaintsBy("country", countryTemp);
         },
         error: function (jqXHR, exception) {
             let msg = '';
@@ -180,16 +185,37 @@ function setMarkers(complaints) {
             "Direccion: "+ complaint.address +"\n" +
             "Tipo: "+ complaint.complaintType +"\n" +
             "Latitud: "+ complaint.latitude +"\n" +
-            "Longitud: "+ complaint.longitude +"\n";
+            "Longitud: "+ complaint.longitude +"\n" +
+            "Comentario: "+ complaint.commentary;
 
-        new google.maps.Marker({
+        let image = {
+            url: mapIcons.get(complaint.complaintType),
+            size: new google.maps.Size(32, 32),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(0, 32)
+        };
+
+        let shape = {
+            coords: [1, 1, 1, 20, 18, 20, 18, 1],
+            type: 'poly'
+        };
+
+        complaintMarkers.push(new google.maps.Marker({
             position: {lat: complaint.latitude, lng: complaint.longitude},
             map: map,
+            icon: image,
+            shape: shape,
             title: resume,
             zIndex: index
-        });
+        }));
     })
+}
 
+function deleteMarkers() {
+    for (let complaintMarker of complaintMarkers) {
+        complaintMarker.setMap(null);
+    }
+    complaintMarkers = [];
 }
 
 $("#registerComplaintButton").click(registerComplaint);
