@@ -34,6 +34,7 @@ function loadMap(lat, lng) {
         position: {lat: lat, lng: lng}
     });
 
+    marker.addListener("dragend", processPosition);
     addListenersToMap();
     showComplaintsBy("country", "Perú");
 }
@@ -141,6 +142,7 @@ function registerComplaint(){
             modalTitle.textContent = "Éxito";
             modalBody.textContent = "Denuncia registrada satisfactoriamente.";
             bootstrapModal.show();
+            deleteMarkers();
             showComplaintsBy("country", countryTemp);
         },
         error: function (jqXHR, exception) {
@@ -186,7 +188,8 @@ function setMarkers(complaints) {
             "Tipo: "+ complaint.complaintType +"\n" +
             "Latitud: "+ complaint.latitude +"\n" +
             "Longitud: "+ complaint.longitude +"\n" +
-            "Comentario: "+ complaint.commentary;
+            "Comentario: "+ complaint.commentary +"\n" +
+            "Fecha de Registro: "+ complaint.creationTime ;
 
         let image = {
             url: mapIcons.get(complaint.complaintType),
