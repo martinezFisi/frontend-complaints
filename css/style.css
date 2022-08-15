@@ -1,6 +1,19 @@
-.app-navbar, .app-navbar .nav-link{
+.navbar, .navbar .nav-link{
     background-color: #212121;
     color: #FAFAFA;
+}
+
+.navbar #not-authenticated{
+    display: flex;
+    margin-right: 1.5rem;
+}
+
+#not-authenticated h3{
+    margin-top: 2rem;
+}
+
+#authenticated span:hover{
+    color: aqua;
 }
 
 .app-register-complaint-form{

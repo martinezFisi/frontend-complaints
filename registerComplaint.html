@@ -10,6 +10,7 @@
     <link href="./css/map.css" rel="stylesheet">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script type="module" src="./js/registerComplaint.js"></script>
 </head>
 <body>
@@ -33,11 +34,27 @@
 </div>
 
 <div class="container-fluid">
-    <div class="row app-navbar">
-        <div class="col-md-3" style="alignment: center">
-            <h2 style="margin: 1rem">Denuncias Ciudadanas</h2>
-        </div>
+    <div class="row">
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand"><h2 style="margin: 1rem">Denuncias Ciudadanas</h2></a>
+               <!-- <div id="not-authenticated">
+                    <img class="dropdown d-flex" style="margin: 1rem" src="./imgs/login.png" alt="No autenticado">
+                    <h3 style="color: #FAFAFA; font-size: small">No autenticado</h3>
+                </div>-->
+                <div class="dropdown d-flex" id="authenticated">
+                    <button class="navbar-toggler" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="border: none">
+                        <img class="dropdown d-flex" style="display: inline-block !important;" src="./imgs/login.png" alt="No autenticado">
+                        <span style="font-size: small">Antony Martinez</span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="#">Editar Perfil</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </div>
+
     <div class="row" style="height: 2rem"></div>
     <div class="row">
         <div class="col-md-4">
@@ -78,6 +95,12 @@
         <div class="col-md-8 app-map-container">
             <div id="map"></div>
         </div>
+    </div>
+
+    <!--Google One Tap-->
+    <div id="g_id_onload"
+         data-client_id="955848519678-n147csieqg2hmppnqev2jep08j5qd8pj.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
