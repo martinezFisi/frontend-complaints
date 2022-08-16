@@ -13,7 +13,7 @@
 }
 
 #authenticated span:hover{
-    color: aqua;
+    text-decoration: underline;
 }
 
 .app-register-complaint-form{
@@ -23,4 +23,15 @@
 
 .app-register-complaint-form textarea{
     resize: none;
+}
+
+#profile-image{
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+}
+
+#profile-username{
+    font-size: small;
+    color: white;
 }

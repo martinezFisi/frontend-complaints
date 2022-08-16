@@ -232,6 +232,11 @@ window.handleCredentialResponse = (response) => {
     console.log('Family Name: ' + responsePayload.family_name);
     console.log("Image URL: " + responsePayload.picture);
     console.log("Email: " + responsePayload.email);
+
+    $("#profile-image").attr("src", responsePayload.picture);
+    $("#profile-username").html(responsePayload.name);
+    $("#not-authenticated").css("display","none");
+    $("#authenticated").css("display","flex");
 }
 
 function parseJwt (token) {
