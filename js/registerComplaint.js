@@ -3,6 +3,8 @@ let API_KEY = "AIzaSyB_SIPbiID5aJfuog8Mq0QmRS5szRqFVe8";
 let BACKEND_HOST = "http://localhost:8282";
 let COMPLAINTS_URI = "/complaints/api/v1/complaints";
 let COMPLAINTS_ENDPOINT = BACKEND_HOST + COMPLAINTS_URI;
+let CITIZENS_URI = "/complaints/api/v1/citizens";
+let CITIZENS_ENDPOINT = BACKEND_HOST + CITIZENS_URI;
 let ADDRESS_COMPONENTS_TYPE = ["postal_code","locality","country"];
 let mapIcons = new Map([
     ['ARMED_ROBBERY', './imgs/ARMED_ROBBERY.png'],
@@ -233,6 +235,15 @@ window.handleCredentialResponse = (response) => {
     console.log("Image URL: " + responsePayload.picture);
     console.log("Email: " + responsePayload.email);
 
+    let citizen = {
+        email : responsePayload.email,
+        firstName : responsePayload.given_name,
+        lastName : responsePayload.family_name
+    }
+    let citizenJson = JSON.stringify(citizen);
+    console.log("citizenJson: " + citizenJson);
+    registerCitizen(citizenJson);
+
     $("#profile-image").attr("src", responsePayload.picture);
     $("#profile-username").html(responsePayload.name);
     $("#not-authenticated").css("display","none");
@@ -247,6 +258,36 @@ function parseJwt (token) {
     }).join(''));
 
     return JSON.parse(jsonPayload);
+}
+
+function registerCitizen(citizenJson){
+    $.ajax({
+        type: "POST",
+        url: CITIZENS_ENDPOINT,
+        contentType: "application/json",
+        accept: "application/json;",
+        data: citizenJson,
+        success: function (result) {
+            var json = JSON.stringify(result);
+            console.log("Respuesta="+json);
+        },
+        error: function (jqXHR, exception) {
+            let msg = '';
+            switch (jqXHR.status) {
+                case 400:
+                    let resp = JSON.parse(jqXHR.responseText);
+                    msg = _.join(resp.errors, '. ');
+                    break;
+                case 500:
+                    msg = "Error interno en el servidor";
+                    break;
+                default:
+                    msg = "Error desconocido";
+            }
+
+            console.log(msg);
+        }
+    });
 }
 
 $("#registerComplaintButton").click(registerComplaint);
