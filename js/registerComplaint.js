@@ -4,7 +4,8 @@ let BACKEND_HOST = "http://localhost:8282";
 let COMPLAINTS_URI = "/complaints/api/v1/complaints";
 let COMPLAINTS_ENDPOINT = BACKEND_HOST + COMPLAINTS_URI;
 let CITIZENS_URI = "/complaints/api/v1/citizens";
-let CITIZENS_ENDPOINT = BACKEND_HOST + CITIZENS_URI;
+let AUTHENTICATION_URI = "/complaints/api/v1/authentication";
+let AUTHENTICATION_ENDPOINT = BACKEND_HOST + AUTHENTICATION_URI;
 let ADDRESS_COMPONENTS_TYPE = ["postal_code","locality","country"];
 let mapIcons = new Map([
     ['ARMED_ROBBERY', './imgs/ARMED_ROBBERY.png'],
@@ -18,6 +19,12 @@ let complaintMarkers = [];
 let latitude;
 let longitude;
 let addressTemp,postalCodeTemp,localityTemp,countryTemp;
+
+//Modal
+let myModal = document.getElementById('registerComplaintModal');
+let bootstrapModal = new bootstrap.Modal(myModal, {backdrop: true})
+let modalTitle = myModal.querySelector('#registerComplaintModalTitle');
+let modalBody = myModal.querySelector('#registerComplaintModalBody');
 
 function initMap(){
     loadMap(-12.053816,-77.084556);
@@ -120,17 +127,11 @@ function registerComplaint(){
         country: countryTemp,
         complaintType : $("#inputComplaintType").val(),
         commentary : $("#inputCommentary").val(),
-        citizenId: 1
+        citizenId:  getCookie("citizenId")
     }
 
     let complaintJson = JSON.stringify(complaint);
     console.log("Data: " + complaintJson);
-
-    //Modal
-    let myModal = document.getElementById('registerComplaintModal');
-    let bootstrapModal = new bootstrap.Modal(myModal, {backdrop: true})
-    let modalTitle = myModal.querySelector('#registerComplaintModalTitle');
-    let modalBody = myModal.querySelector('#registerComplaintModalBody');
 
     $.ajax({
         type: "POST",
@@ -223,31 +224,8 @@ function deleteMarkers() {
     complaintMarkers = [];
 }
 
-window.handleCredentialResponse = (response) => {
-    // decodeJwtResponse() is a custom function defined by you
-    // to decode the credential response.
-    let responsePayload = parseJwt(response.credential);
-
-    console.log("ID: " + responsePayload.sub);
-    console.log('Full Name: ' + responsePayload.name);
-    console.log('Given Name: ' + responsePayload.given_name);
-    console.log('Family Name: ' + responsePayload.family_name);
-    console.log("Image URL: " + responsePayload.picture);
-    console.log("Email: " + responsePayload.email);
-
-    let citizen = {
-        email : responsePayload.email,
-        firstName : responsePayload.given_name,
-        lastName : responsePayload.family_name
-    }
-    let citizenJson = JSON.stringify(citizen);
-    console.log("citizenJson: " + citizenJson);
-    registerCitizen(citizenJson);
-
-    $("#profile-image").attr("src", responsePayload.picture);
-    $("#profile-username").html(responsePayload.name);
-    $("#not-authenticated").css("display","none");
-    $("#authenticated").css("display","flex");
+window.handleCredentialResponse = (idToken) => {
+    authenticateIdToken(idToken);
 }
 
 function parseJwt (token) {
@@ -260,16 +238,25 @@ function parseJwt (token) {
     return JSON.parse(jsonPayload);
 }
 
-function registerCitizen(citizenJson){
+function authenticateIdToken(response){
     $.ajax({
         type: "POST",
-        url: CITIZENS_ENDPOINT,
-        contentType: "application/json",
+        url: AUTHENTICATION_ENDPOINT + "/" + response.credential,
         accept: "application/json;",
-        data: citizenJson,
         success: function (result) {
             var json = JSON.stringify(result);
+            let obj = JSON.parse(json);
             console.log("Respuesta="+json);
+
+            if ( getCookie("citizenId") === "" ) {
+                setCookie("citizenId", obj.citizenId, 90);
+            }
+
+            let responsePayload = parseJwt(response.credential);
+            $("#profile-image").attr("src", responsePayload.picture);
+            $("#profile-username").html(responsePayload.name);
+            $("#not-authenticated").css("display","none");
+            $("#authenticated").css("display","flex");
         },
         error: function (jqXHR, exception) {
             let msg = '';
@@ -284,10 +271,33 @@ function registerCitizen(citizenJson){
                 default:
                     msg = "Error desconocido";
             }
-
-            console.log(msg);
+            modalTitle.textContent = "Error durante la autenticación";
+            modalBody.textContent = msg;
+            bootstrapModal.show();
         }
     });
+}
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var c of ca) {
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
 }
 
 $("#registerComplaintButton").click(registerComplaint);
