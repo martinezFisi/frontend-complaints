@@ -8,12 +8,20 @@
     margin-right: 1.5rem;
 }
 
-#not-authenticated h3{
-    margin-top: 2rem;
+#authenticated span:hover, #not-authenticated a:hover{
+    text-decoration: underline;
 }
 
-#authenticated span:hover{
-    text-decoration: underline;
+#not-authenticated img{
+    margin-top: 0.8rem;
+    margin-right: 0.5rem;
+}
+
+#not-authenticated a{
+    color: #FAFAFA;
+    font-size: small;
+    margin-top: 1.8rem;
+    text-decoration: none;
 }
 
 .app-register-complaint-form{

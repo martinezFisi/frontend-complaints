@@ -248,11 +248,13 @@ function authenticateIdToken(response){
             let obj = JSON.parse(json);
             console.log("Respuesta="+json);
 
-            if ( getCookie("citizenId") === "" ) {
+            let responsePayload = parseJwt(response.credential);
+
+            if ( obj.citizenId !== getCookie("citizenId") ) {
                 setCookie("citizenId", obj.citizenId, 90);
+                setCookie("email", responsePayload.email, 90);
             }
 
-            let responsePayload = parseJwt(response.credential);
             $("#profile-image").attr("src", responsePayload.picture);
             $("#profile-username").html(responsePayload.name);
             $("#not-authenticated").css("display","none");
@@ -300,6 +302,23 @@ function getCookie(cname) {
     return "";
 }
 
+function deleteCookie(name) {
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+function signOut(){
+    google.accounts.id.revoke(getCookie("email"), done => {
+        console.log('consent revoked');
+        deleteCookie('citizenId');
+        deleteCookie('email');
+        $("#profile-image").attr("src", "");
+        $("#profile-username").html("");
+        $("#not-authenticated").css("display","flex");
+        $("#authenticated").css("display","none");
+    });
+}
+
 $("#registerComplaintButton").click(registerComplaint);
+$("#signOut").click(signOut);
 
 window.initMap = initMap;
