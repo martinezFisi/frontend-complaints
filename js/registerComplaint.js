@@ -4,6 +4,7 @@ let BACKEND_HOST = "http://localhost:8282";
 let COMPLAINTS_URI = "/complaints/api/v1/complaints";
 let COMPLAINTS_ENDPOINT = BACKEND_HOST + COMPLAINTS_URI;
 let CITIZENS_URI = "/complaints/api/v1/citizens";
+let CITIZENS_ENDPOINT = BACKEND_HOST + CITIZENS_URI;
 let AUTHENTICATION_URI = "/complaints/api/v1/authentication";
 let AUTHENTICATION_ENDPOINT = BACKEND_HOST + AUTHENTICATION_URI;
 let ADDRESS_COMPONENTS_TYPE = ["postal_code","locality","country"];
@@ -20,11 +21,15 @@ let latitude;
 let longitude;
 let addressTemp,postalCodeTemp,localityTemp,countryTemp;
 
-//Modal
+//registerComplaintModal
 let myModal = document.getElementById('registerComplaintModal');
 let bootstrapModal = new bootstrap.Modal(myModal, {backdrop: true})
 let modalTitle = myModal.querySelector('#registerComplaintModalTitle');
 let modalBody = myModal.querySelector('#registerComplaintModalBody');
+
+//editProfileModal
+let editProfileModal = document.getElementById('editProfileModal');
+let editProfileBootstrapModal = new bootstrap.Modal(editProfileModal, {backdrop: true})
 
 function initMap(){
     loadMap(-12.053816,-77.084556);
@@ -318,7 +323,105 @@ function signOut(){
     });
 }
 
+function showEditProfileModal(){
+    fillEditProfileForm();
+    editProfileBootstrapModal.show();
+}
+
+function fillEditProfileForm(){
+    $.ajax({
+        type: "GET",
+        url: CITIZENS_ENDPOINT + "/" + getCookie("citizenId"),
+        accept: "application/json;",
+        success: function (result) {
+            var json = JSON.stringify(result);
+            let obj = JSON.parse(json);
+            console.log("Respuesta="+json);
+
+            $("#inputEmail").val(obj.email);
+            $("#inputPhoneNumber").val(obj.phoneNumber);
+            $("#inputDocumentType").val(obj.documentType);
+            $("#inputDocumentNumber").val(obj.documentNumber);
+            $("#inputFirstName").val(obj.firstName);
+            $("#inputLastName").val(obj.lastName);
+            $("#inputAge").val(obj.age);
+        },
+        error: function (jqXHR, exception) {
+            let msg = '';
+            switch (jqXHR.status) {
+                case 400:
+                    let resp = JSON.parse(jqXHR.responseText);
+                    msg = _.join(resp.errors, '. ');
+                    break;
+                case 500:
+                    msg = "Error interno en el servidor";
+                    break;
+                default:
+                    msg = "Error desconocido";
+            }
+            modalTitle.textContent = "Error al obtener los datos del usuario";
+            modalBody.textContent = msg;
+            bootstrapModal.show();
+        }
+    });
+}
+
+function updateUserProfile(){
+
+    let citizen = {
+        id : getCookie("citizenId"),
+        email: $("#inputEmail").val(),
+        documentType : $("#inputDocumentType").val(),
+        documentNumber : $("#inputDocumentNumber").val(),
+        phoneNumber: $("#inputPhoneNumber").val(),
+        firstName: $("#inputFirstName").val(),
+        lastName: $("#inputLastName").val(),
+        age : $("#inputAge").val()
+    }
+
+    let citizenJson = JSON.stringify(citizen);
+    console.log("Data: " + citizenJson);
+
+    $.ajax({
+        type: "PUT",
+        url: CITIZENS_ENDPOINT + "/" + citizen.id,
+        contentType: "application/json",
+        data: citizenJson,
+        success: function (result) {
+            modalTitle.textContent = "Éxito";
+            modalBody.textContent = "Datos actualizados correctamente.";
+            bootstrapModal.show();
+        },
+        error: function (jqXHR, exception) {
+            let msg = '';
+            switch (jqXHR.status) {
+                case 400:
+                    let resp = JSON.parse(jqXHR.responseText);
+                    msg = _.join(resp.errors, '. ');
+                    break;
+                case 500:
+                    msg = "Error interno en el servidor";
+                    break;
+                default:
+                    msg = "Error desconocido";
+            }
+            modalTitle.textContent = "Error al intentar actualizar los datos";
+            modalBody.textContent = msg;
+            bootstrapModal.show();
+        }
+    });
+
+}
+
+function autenticateUser(){
+    deleteCookie("g_state");
+    location.reload();
+}
+
 $("#registerComplaintButton").click(registerComplaint);
 $("#signOut").click(signOut);
+$("#editProfile").click(showEditProfileModal);
+$("#editProfileButton").click(updateUserProfile);
+$("#autenticate-user").click(autenticateUser);
 
 window.initMap = initMap;

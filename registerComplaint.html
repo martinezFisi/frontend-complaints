@@ -16,7 +16,7 @@
 </head>
 <body>
 
-<!-- Modal -->
+<!-- registerComplaintModal -->
 <div class="modal fade" id="registerComplaintModal" tabindex="-1" aria-labelledby="registerComplaintModal"
      aria-hidden="true">
     <div class="modal-dialog">
@@ -35,6 +35,89 @@
     </div>
 </div>
 
+<!-- editProfileModal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalTitle">Editar Perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="inputEmail" class="form-label">Email</label>
+                            </div>
+                            <div class="col-md-8 ms-auto">
+                                <input type="text" class="form-control" id="inputEmail" disabled>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="inputPhoneNumber" class="form-label">Celular</label>
+                            </div>
+                            <div class="col-md-8 ms-auto">
+                                <input type="text" class="form-control" id="inputPhoneNumber">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="inputDocumentType" class="form-label">Tipo de Documento</label>
+                            </div>
+                            <div class="col-md-8 ms-auto">
+                                <select class="form-select" id="inputDocumentType">
+                                    <option value="DNI">DNI</option>
+                                    <option value="FOREIGN_CARD">Carnet de Extranjería</option>
+                                    <option value="RUC">RUC</option>
+                                    <option value="PASSPORT">Pasaporte</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="inputDocumentNumber" class="form-label">Documento</label>
+                            </div>
+                            <div class="col-md-8 ms-auto">
+                                <input type="text" maxlength="255" class="form-control" id="inputDocumentNumber">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="inputFirstName" class="form-label">Nombres</label>
+                            </div>
+                            <div class="col-md-8 ms-auto">
+                                <input type="text" maxlength="255" class="form-control" id="inputFirstName">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="inputLastName" class="form-label">Apellidos</label>
+                            </div>
+                            <div class="col-md-8 ms-auto">
+                                <input type="text" maxlength="255" class="form-control" id="inputLastName">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="inputAge" class="form-label">Edad</label>
+                            </div>
+                            <div class="col-md-8 ms-auto">
+                                <input type="number" min="14" max="100" class="form-control" id="inputAge">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="editProfileButton" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container-fluid">
     <div class="row">
         <nav class="navbar navbar-dark bg-dark">
@@ -42,8 +125,8 @@
                 <a class="navbar-brand"><h2 style="margin: 1rem">Denuncias Ciudadanas</h2></a>
                 <div id="not-authenticated">
                     <img class="dropdown d-flex" src="./imgs/login.png" alt="No autenticado">
-                    <a href="#" onclick="location.reload()">
-                        AUTENTICARSE
+                    <a href="#" id="autenticate-user">
+                        Autenticarse
                     </a>
                 </div>
                 <div class="dropdown" id="authenticated" style="display: none">

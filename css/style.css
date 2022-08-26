@@ -43,3 +43,7 @@
     font-size: small;
     color: white;
 }
+
+#editProfileModal .row{
+    margin-top: 1rem !important;
+}
