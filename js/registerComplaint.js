@@ -14,6 +14,7 @@ let mapIcons = new Map([
     ['ROBBERY_TO_VEHICLE', './imgs/ROBBERY_TO_VEHICLE.png'],
     ['VANDALISM', './imgs/VANDALISM.png']
 ]);
+let MIN_ZOOM_TO_SHOW_COMPLAINTS = 16;
 let map;
 let marker;
 let complaintMarkers = [];
@@ -57,6 +58,14 @@ function addListenersToMap(){
     map.addListener("click", (mapsMouseEvent) => {
         marker.setPosition(mapsMouseEvent.latLng);
         processPosition();
+    });
+    map.addListener("zoom_changed", () => {
+        console.log("zoom changed: " + map.getZoom());
+        if ( map.getZoom() >= MIN_ZOOM_TO_SHOW_COMPLAINTS ) {
+            setMarkersVisibility(true);
+        } else {
+            setMarkersVisibility(false);
+        }
     });
 }
 
@@ -227,6 +236,12 @@ function deleteMarkers() {
         complaintMarker.setMap(null);
     }
     complaintMarkers = [];
+}
+
+function setMarkersVisibility(isVisible) {
+    for (let complaintMarker of complaintMarkers) {
+        complaintMarker.setVisible(isVisible);
+    }
 }
 
 window.handleCredentialResponse = (idToken) => {
