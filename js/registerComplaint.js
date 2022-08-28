@@ -14,7 +14,13 @@ let mapIcons = new Map([
     ['ROBBERY_TO_VEHICLE', './imgs/ROBBERY_TO_VEHICLE.png'],
     ['VANDALISM', './imgs/VANDALISM.png']
 ]);
-let MIN_ZOOM_TO_SHOW_COMPLAINTS = 16;
+let complaintTypes = new Map([
+    ['ARMED_ROBBERY', 'Robo a mano armada'],
+    ['ROBBERY_ON_THE_GO', 'Robo al paso'],
+    ['ROBBERY_TO_VEHICLE', 'Robo a vehículo'],
+    ['VANDALISM', 'Vandalismo']
+]);
+let MIN_ZOOM_TO_SHOW_COMPLAINTS = 14;
 let map;
 let marker;
 let complaintMarkers = [];
@@ -60,7 +66,6 @@ function addListenersToMap(){
         processPosition();
     });
     map.addListener("zoom_changed", () => {
-        console.log("zoom changed: " + map.getZoom());
         if ( map.getZoom() >= MIN_ZOOM_TO_SHOW_COMPLAINTS ) {
             setMarkersVisibility(true);
         } else {
@@ -72,7 +77,6 @@ function addListenersToMap(){
 function processPosition(){
     let lat = marker.getPosition().lat();
     let lng = marker.getPosition().lng();
-    console.log("lat=" + lat + ", lng=" + lng);
     setLatLng(lat, lng);
     setLatLngInForm(lat, lng);
     getAddressByLatLng(lat, lng);
@@ -115,7 +119,6 @@ function getAddressByLatLng(latitud, longitud){
             }).map(comp => {
                 return {name: comp.long_name, type: getAddressComponentType(comp.types)}
             }).forEach((item, index) => {
-                    console.log(item.name, item.type)
                     if ( item.type === "postal_code" ) postalCodeTemp = item.name;
                     if ( item.type === "locality" ) localityTemp = item.name;
                     if ( item.type === "country" ) countryTemp = item.name;
@@ -145,7 +148,6 @@ function registerComplaint(){
     }
 
     let complaintJson = JSON.stringify(complaint);
-    console.log("Data: " + complaintJson);
 
     $.ajax({
         type: "POST",
@@ -155,7 +157,6 @@ function registerComplaint(){
         data: complaintJson,
         success: function (result) {
             var json = JSON.stringify(result);
-            console.log("Respuesta="+json);
             modalTitle.textContent = "Éxito";
             modalBody.textContent = "Denuncia registrada satisfactoriamente.";
             bootstrapModal.show();
@@ -167,7 +168,7 @@ function registerComplaint(){
             switch (jqXHR.status) {
                 case 400:
                     let resp = JSON.parse(jqXHR.responseText);
-                    msg = _.join(resp.errors, '. ');
+                    msg = _.join(resp.errors, '<br>');
                     break;
                 case 500:
                     msg = "Error interno en el servidor";
@@ -177,14 +178,13 @@ function registerComplaint(){
             }
 
             modalTitle.textContent = "Error al registrar la denuncia";
-            modalBody.textContent = msg;
+            modalBody.innerHTML = msg;
             bootstrapModal.show();
         }
     });
 }
 
 function showComplaintsBy(filter, value){
-    //initMap(latitud, longitud);
 
     $.ajax({
         type: "GET",
@@ -202,7 +202,7 @@ function setMarkers(complaints) {
     complaints.forEach((complaint, index) => {
         let resume = "Codigo: "+ complaint.id +"\n" +
             "Direccion: "+ complaint.address +"\n" +
-            "Tipo: "+ complaint.complaintType +"\n" +
+            "Tipo: "+ complaintTypes.get(complaint.complaintType) +"\n" +
             "Latitud: "+ complaint.latitude +"\n" +
             "Longitud: "+ complaint.longitude +"\n" +
             "Comentario: "+ complaint.commentary +"\n" +
@@ -266,7 +266,6 @@ function authenticateIdToken(response){
         success: function (result) {
             var json = JSON.stringify(result);
             let obj = JSON.parse(json);
-            console.log("Respuesta="+json);
 
             let responsePayload = parseJwt(response.credential);
 
@@ -328,7 +327,6 @@ function deleteCookie(name) {
 
 function signOut(){
     google.accounts.id.revoke(getCookie("email"), done => {
-        console.log('consent revoked');
         deleteCookie('citizenId');
         deleteCookie('email');
         $("#profile-image").attr("src", "");
@@ -351,7 +349,6 @@ function fillEditProfileForm(){
         success: function (result) {
             var json = JSON.stringify(result);
             let obj = JSON.parse(json);
-            console.log("Respuesta="+json);
 
             $("#inputEmail").val(obj.email);
             $("#inputPhoneNumber").val(obj.phoneNumber);
@@ -395,7 +392,6 @@ function updateUserProfile(){
     }
 
     let citizenJson = JSON.stringify(citizen);
-    console.log("Data: " + citizenJson);
 
     $.ajax({
         type: "PUT",
@@ -412,7 +408,7 @@ function updateUserProfile(){
             switch (jqXHR.status) {
                 case 400:
                     let resp = JSON.parse(jqXHR.responseText);
-                    msg = _.join(resp.errors, '. ');
+                    msg = _.join(resp.errors, '<br>');
                     break;
                 case 500:
                     msg = "Error interno en el servidor";
@@ -421,7 +417,7 @@ function updateUserProfile(){
                     msg = "Error desconocido";
             }
             modalTitle.textContent = "Error al intentar actualizar los datos";
-            modalBody.textContent = msg;
+            modalBody.innerHTML = msg;
             bootstrapModal.show();
         }
     });
