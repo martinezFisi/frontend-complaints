@@ -47,3 +47,7 @@
 #editProfileModal .row{
     margin-top: 1rem !important;
 }
+
+.text-justify{
+    text-align: justify;
+}
