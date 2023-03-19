@@ -30,13 +30,13 @@ let addressTemp,postalCodeTemp,localityTemp,countryTemp;
 
 //registerComplaintModal
 let myModal = document.getElementById('registerComplaintModal');
-let bootstrapModal = new bootstrap.Modal(myModal, {backdrop: true})
+let bootstrapModal = new bootstrap.Modal(myModal, {backdrop: true});
 let modalTitle = myModal.querySelector('#registerComplaintModalTitle');
 let modalBody = myModal.querySelector('#registerComplaintModalBody');
 
 //editProfileModal
 let editProfileModal = document.getElementById('editProfileModal');
-let editProfileBootstrapModal = new bootstrap.Modal(editProfileModal, {backdrop: true})
+let editProfileBootstrapModal = new bootstrap.Modal(editProfileModal, {backdrop: true});
 
 function initMap(){
     loadMap(-12.053816,-77.084556);
@@ -109,7 +109,7 @@ function getAddressByLatLng(latitud, longitud){
         },
         dataType: "json",
         success: function (result) {
-            let json = JSON.stringify(result)
+            let json = JSON.stringify(result);
             let obj = JSON.parse(json);
             let addressComponents = obj.results[0].address_components;
             addressTemp = obj.results[0].formatted_address;
@@ -145,7 +145,7 @@ function registerComplaint(){
         complaintType : $("#inputComplaintType").val(),
         commentary : $("#inputCommentary").val(),
         citizenId:  getCookie("citizenId")
-    }
+    };
 
     let complaintJson = JSON.stringify(complaint);
 
